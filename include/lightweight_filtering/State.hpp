@@ -261,6 +261,9 @@ class NormalVectorElement: public ElementBase<NormalVectorElement,NormalVectorEl
     return *this;
   }
   static V3D getRotationFromTwoNormals(const V3D& a, const V3D& b, const V3D& a_perp){
+  	// |i j k|
+  	// |0 0 1| = -b,a,0
+  	// |a b c|
     const V3D cross = a.cross(b);
     const double crossNorm = cross.norm();
     const double c = a.dot(b);
@@ -504,6 +507,7 @@ class TH_getDimension<std::tuple<Element, Elements...>>{
 template<typename... Elements>
 class State{
  public:
+  //t:tuple_cat后有许多元素,实际调用时不知道具体的类型,t可以返回真正的类型
   typedef decltype(std::tuple_cat(typename TH_convert<Elements>::t()...)) t;
   static const unsigned int D_ = TH_getDimension<t>::D_;
   static const unsigned int E_ = std::tuple_size<t>::value;

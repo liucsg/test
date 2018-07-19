@@ -17,6 +17,8 @@
 
 namespace LWF{
 
+//
+//Ä£°å+¶àÖØ¼Ì³Ð
 template<typename Innovation, typename FilterState, typename Meas, typename Noise, typename OutlierDetection = OutlierDetectionDefault, bool isCoupled = false>
 class Update: public ModelBase<Update<Innovation,FilterState,Meas,Noise,OutlierDetection,isCoupled>,Innovation,typename FilterState::mtState,Noise>, public PropertyHandler{
  public:
@@ -178,6 +180,7 @@ class Update: public ModelBase<Update<Innovation,FilterState,Meas,Noise,OutlierD
       std::cout << "Warning: update postProcessing is not implemented!" << std::endl;
     }
   }
+  
   int performUpdate(mtFilterState& filterState, const mtMeas& meas){
     bool isFinished = true;
     int r = 0;
@@ -205,8 +208,10 @@ class Update: public ModelBase<Update<Innovation,FilterState,Meas,Noise,OutlierD
     } while (!isFinished);
     return r;
   }
+  
   int performUpdateEKF(mtFilterState& filterState, const mtMeas& meas){
     meas_ = meas;
+	//useSpecialLinearizationPoint_:false
     if(!useSpecialLinearizationPoint_){
       this->jacState(H_,filterState.state_);
       Hlin_ = H_;
@@ -225,6 +230,7 @@ class Update: public ModelBase<Update<Innovation,FilterState,Meas,Noise,OutlierD
       this->evalInnovationShort(y_,linState_);
     }
 
+	//isCoupled:false
     if(isCoupled){
       C_ = filterState.G_*preupdnoiP_*Hn_.transpose();
       Py_ = Hlin_*filterState.cov_*Hlin_.transpose() + Hn_*updnoiP_*Hn_.transpose() + Hlin_*C_ + C_.transpose()*Hlin_.transpose();
@@ -254,6 +260,7 @@ class Update: public ModelBase<Update<Innovation,FilterState,Meas,Noise,OutlierD
     filterState.state_.boxPlus(updateVec_,filterState.state_);
     return 0;
   }
+  
   int performUpdateIEKF(mtFilterState& filterState, const mtMeas& meas){
     meas_ = meas;
     successfulUpdate_ = false;

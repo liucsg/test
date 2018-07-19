@@ -62,16 +62,19 @@ class Prediction: public ModelBase<Prediction<FilterState>,typename FilterState:
   virtual void jacPreviousState(Eigen::MatrixXd& F, const mtState& previousState, double dt) const = 0;
   virtual void jacNoise(Eigen::MatrixXd& F, const mtState& previousState, double dt) const = 0;
   virtual void noMeasCase(mtFilterState& filterState, mtMeas& meas, double dt){};
+  
   virtual void preProcess(mtFilterState& filterState, const mtMeas& meas, double dt){
     if(!disablePreAndPostProcessingWarning_){
       std::cout << "Warning: prediction preProcessing is not implemented!" << std::endl;
     }
   };
+  
   virtual void postProcess(mtFilterState& filterState, const mtMeas& meas, double dt){
     if(!disablePreAndPostProcessingWarning_){
       std::cout << "Warning: prediction postProcessing is not implemented!" << std::endl;
     }
   };
+  
   int performPrediction(mtFilterState& filterState, const mtMeas& meas, double dt){
     switch(filterState.mode_){
       case ModeEKF:
@@ -171,6 +174,7 @@ class Prediction: public ModelBase<Prediction<FilterState>,typename FilterState:
     postProcess(filterState,meanMeas,dT);
     return 0;
   }
+  
   virtual int predictMergedUKF(mtFilterState& filterState, double tTarget, const std::map<double,mtMeas>& measMap){
     filterState.refreshNoiseSigmaPoints(prenoiP_);
     const typename std::map<double,mtMeas>::const_iterator itMeasStart = measMap.upper_bound(filterState.t_);
